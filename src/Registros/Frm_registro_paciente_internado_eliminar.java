@@ -1,10 +1,21 @@
 package Registros;
 
+import Metodos_SQL.ConexionBD;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+
 public class Frm_registro_paciente_internado_eliminar extends javax.swing.JFrame {
+
+    ConexionBD cc = new ConexionBD();
+    Connection con = cc.conectar();
 
     public Frm_registro_paciente_internado_eliminar() {
         initComponents();
-
+        this.setLocationRelativeTo(null);
+        mostrarDatos();
     }
 
     @SuppressWarnings("unchecked")
@@ -194,7 +205,8 @@ public class Frm_registro_paciente_internado_eliminar extends javax.swing.JFrame
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarActionPerformed
-
+        eliminarRegistros();
+        mostrarDatos();
 
     }//GEN-LAST:event_btnEliminarActionPerformed
 
@@ -208,20 +220,108 @@ public class Frm_registro_paciente_internado_eliminar extends javax.swing.JFrame
     }//GEN-LAST:event_tblTablaInternadoMouseClicked
 
     private void btnRegresarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegresarActionPerformed
-
+        Frm_registro_historial_clinico ventana = new Frm_registro_historial_clinico();
+        ventana.setVisible(true);
+        this.dispose();
     }//GEN-LAST:event_btnRegresarActionPerformed
 
     private void txtBuscarKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtBuscarKeyReleased
-
+        filtrarDatos(txtBuscar.getText());
     }//GEN-LAST:event_txtBuscarKeyReleased
 
     private void MenuRegistrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MenuRegistrarActionPerformed
-
+        Frm_registro_paciente_internado ventanaInternado = new Frm_registro_paciente_internado();
+        ventanaInternado.setVisible(true);
+        this.dispose();
     }//GEN-LAST:event_MenuRegistrarActionPerformed
 
     private void MenuModificarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MenuModificarActionPerformed
-
+        Frm_registro_paciente_internado_modificar ventanaInternado = new Frm_registro_paciente_internado_modificar();
+        ventanaInternado.setVisible(true);
+        this.dispose();
     }//GEN-LAST:event_MenuModificarActionPerformed
+
+    public void eliminarRegistros() {
+        int filaSeleccionada = tblTablaInternado.getSelectedRow();
+
+        try {
+            String SQL = "delete from registro_paciente where Cédula=" + tblTablaInternado.getValueAt(filaSeleccionada, 0);
+
+            Statement st = con.createStatement();
+            int n = st.executeUpdate(SQL);
+
+            if (n >= 0) {
+                JOptionPane.showMessageDialog(null, "Registro Eliminado");
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Error al Eliminar Registro" + e.getMessage());
+        }
+    }
+
+    public void mostrarDatos() {
+
+        String[] titulos = {"Cédula", "Nombre", "Apellido", "NúmeroSala", "Área", "NúmeroCama", "MotivoIngreso", "MédicoAsignado"};
+        String[] registros = new String[9];
+        DefaultTableModel modelo = new DefaultTableModel(null, titulos);
+
+        String SQL = "select * from registro_paciente";
+
+        try {
+
+            Statement st = con.createStatement();
+            ResultSet rs = st.executeQuery(SQL);
+
+            while (rs.next()) {
+                registros[0] = rs.getString("Cédula");
+                registros[1] = rs.getString("Nombre");
+                registros[2] = rs.getString("Apellido");
+                registros[3] = rs.getString("NúmeroSala");
+                registros[4] = rs.getString("Área");
+                registros[5] = rs.getString("NúmeroCama");
+                registros[6] = rs.getString("MotivoIngreso");
+                registros[7] = rs.getString("MédicoAsignado");
+
+                modelo.addRow(registros);
+
+            }
+            tblTablaInternado.setModel(modelo);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Error al Mostrar Datos" + e);
+        }
+
+    }
+
+    public void filtrarDatos(String valor) {
+        String[] titulos = {"Cédula", "Nombre", "Apellido", "NúmeroSala", "Área", "NúmeroCama", "MotivoIngreso", "MédicoAsignado"};
+        String[] registros = new String[9];
+        DefaultTableModel modelo = new DefaultTableModel(null, titulos);
+
+        String SQL = "select * from registro_paciente where Cédula like '%" + valor + "%'";
+
+        try {
+
+            Statement st = con.createStatement();
+            ResultSet rs = st.executeQuery(SQL);
+
+            while (rs.next()) {
+                registros[0] = rs.getString("Cédula");
+                registros[1] = rs.getString("Nombre");
+                registros[2] = rs.getString("Apellido");
+                registros[3] = rs.getString("NúmeroSala");
+                registros[4] = rs.getString("Área");
+                registros[5] = rs.getString("NúmeroCama");
+                registros[6] = rs.getString("MotivoIngreso");
+                registros[7] = rs.getString("MédicoAsignado");
+
+                modelo.addRow(registros);
+
+            }
+            tblTablaInternado.setModel(modelo);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Error al Mostrar Datos" + e);
+        }
+
+    }
 
     /**
      * @param args the command line arguments

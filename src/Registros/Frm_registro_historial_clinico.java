@@ -430,7 +430,9 @@ public class Frm_registro_historial_clinico extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnInternarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnInternarActionPerformed
-
+        Frm_registro_paciente_internado ventanaInternado = new Frm_registro_paciente_internado();
+        ventanaInternado.setVisible(true);
+        this.dispose();
     }//GEN-LAST:event_btnInternarActionPerformed
 
     private void btnRegresarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegresarActionPerformed

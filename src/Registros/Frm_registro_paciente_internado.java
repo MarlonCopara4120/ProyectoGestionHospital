@@ -1,13 +1,37 @@
 package Registros;
 
+import Metodos_SQL.ConexionBD;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+
 public class Frm_registro_paciente_internado extends javax.swing.JFrame {
+
+    ConexionBD cc = new ConexionBD();
+    Connection con = cc.conectar();
 
     /**
      * Creates new form Frm_registro_paciente_internado
      */
     public Frm_registro_paciente_internado() {
         initComponents();
+        this.setLocationRelativeTo(null);
+        mostrarDatos();
+    }
 
+    public void bloquear() {
+        txtCedula.setEnabled(false);
+        txtNombre.setEnabled(false);
+        txtApellido.setEnabled(false);
+    }
+
+    public void desbloquear() {
+        txtCedula.setEnabled(true);
+        txtNombre.setEnabled(true);
+        txtApellido.setEnabled(true);
     }
 
     /**
@@ -331,7 +355,10 @@ public class Frm_registro_paciente_internado extends javax.swing.JFrame {
 
     private void btnRegistrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegistrarActionPerformed
         // TODO add your handling code here:
-
+        insertarDatos();
+        desbloquear();
+        limpiarCajas();
+        mostrarDatos();
     }//GEN-LAST:event_btnRegistrarActionPerformed
 
     private void txtBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtBuscarActionPerformed
@@ -340,26 +367,171 @@ public class Frm_registro_paciente_internado extends javax.swing.JFrame {
 
     private void tblTablaInternadoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblTablaInternadoMouseClicked
         // TODO add your handling code here:
+        int filaSeleccionada = tblTablaInternado.rowAtPoint(evt.getPoint());
+        bloquear();
+        txtCedula.setText(tblTablaInternado.getValueAt(filaSeleccionada, 0).toString());
+        txtNombre.setText(tblTablaInternado.getValueAt(filaSeleccionada, 1).toString());
+        txtApellido.setText(tblTablaInternado.getValueAt(filaSeleccionada, 2).toString());
 
 
     }//GEN-LAST:event_tblTablaInternadoMouseClicked
 
     private void btnRegresarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegresarActionPerformed
-
+        Frm_registro_historial_clinico ventana = new Frm_registro_historial_clinico();
+        ventana.setVisible(true);
+        this.dispose();
     }//GEN-LAST:event_btnRegresarActionPerformed
 
     private void txtBuscarKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtBuscarKeyReleased
-
+        filtrarDatos(txtBuscar.getText());
     }//GEN-LAST:event_txtBuscarKeyReleased
 
     private void MenuModificarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MenuModificarActionPerformed
 
-
+        Frm_registro_paciente_internado_modificar ventanaModificar = new Frm_registro_paciente_internado_modificar();
+        ventanaModificar.setVisible(true);
+        this.dispose();
     }//GEN-LAST:event_MenuModificarActionPerformed
 
     private void MenuEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MenuEliminarActionPerformed
-
+        Frm_registro_paciente_internado_eliminar ventanaModificar = new Frm_registro_paciente_internado_eliminar();
+        ventanaModificar.setVisible(true);
+        this.dispose();
     }//GEN-LAST:event_MenuEliminarActionPerformed
+
+    public void mostrarDatos() {
+
+        String[] titulos = {"Cédula", "Nombre", "Apellido", "FechaNacimiento", "Nacionalidad", "Sexo", "Dirección"};
+        String[] registros = new String[7];
+
+        //HERE!!!!!
+        DefaultTableModel modelo = new DefaultTableModel(null, titulos);
+
+        String SQL = "select * from registro_paciente";
+
+        try {
+
+            Statement st = con.createStatement();
+            ResultSet rs = st.executeQuery(SQL);
+
+            while (rs.next()) {
+                registros[0] = rs.getString("Cédula");
+                registros[1] = rs.getString("Nombre");
+                registros[2] = rs.getString("Apellido");
+                registros[3] = rs.getString("FechaNacimiento");
+                registros[4] = rs.getString("Nacionalidad");
+                registros[5] = rs.getString("Sexo");
+                registros[6] = rs.getString("Dirección");
+
+                //  registros[7] = rs.getString("Especialidad");
+                //  registros[8] = rs.getString("ExperienciaLaboral");
+                modelo.addRow(registros);
+
+            }
+            tblTablaInternado.setModel(modelo);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Error al Mostrar Datos" + e);
+        }
+
+    }
+
+    public void filtrarDatos(String valor) {
+
+        String[] titulos = {"Cédula", "Nombre", "Apellido", "FechaNacimiento", "Nacionalidad", "Sexo", "Dirección"};
+        String[] registros = new String[7];
+
+        //HERE!!!!!
+        DefaultTableModel modelo = new DefaultTableModel(null, titulos);
+
+        String SQL = "select * from registro_paciente where Cédula like '%" + valor + "%'";
+
+        try {
+
+            Statement st = con.createStatement();
+            ResultSet rs = st.executeQuery(SQL);
+
+            while (rs.next()) {
+                registros[0] = rs.getString("Cédula");
+                registros[1] = rs.getString("Nombre");
+                registros[2] = rs.getString("Apellido");
+                registros[3] = rs.getString("FechaNacimiento");
+                registros[4] = rs.getString("Nacionalidad");
+                registros[5] = rs.getString("Sexo");
+                registros[6] = rs.getString("Dirección");
+
+                //  registros[7] = rs.getString("Especialidad");
+                //  registros[8] = rs.getString("ExperienciaLaboral");
+                modelo.addRow(registros);
+
+            }
+            tblTablaInternado.setModel(modelo);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Error al Mostrar Datos" + e);
+        }
+
+    }
+
+    public void insertarDatos() {
+
+        try {
+            String SQL = " update registro_paciente set Nombre=?,Apellido=?,NúmeroSala=?,Área=?,NúmeroCama=?,MotivoIngreso=?,MédicoAsignado=? where Cédula=? ";
+            int filaSeleccionada = tblTablaInternado.getSelectedRow();
+            String dao = (String) tblTablaInternado.getValueAt(filaSeleccionada, 0);
+            PreparedStatement pst = con.prepareStatement(SQL);
+
+            pst.setString(1, txtNombre.getText());
+            pst.setString(2, txtApellido.getText());
+            pst.setString(3, txtNumeroSala.getText());
+            pst.setString(4, txtArea.getText());
+            pst.setString(5, txtNumeroCama.getText());
+            pst.setString(6, txtMotivoIngreso.getText());
+            pst.setString(7, txtMedicoAsignado.getText());
+
+            pst.setString(8, dao);
+            pst.executeUpdate();
+            JOptionPane.showMessageDialog(null, "Registro Actualizado Exitoso");
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Error de Actualiación" + e.getMessage());
+        }
+    }
+
+    public void limpiarCajas() {
+
+        txtCedula.setText("");
+        txtNombre.setText("");
+        txtApellido.setText("");
+
+        txtNumeroSala.setText("");
+        txtArea.setText("");
+        txtNumeroCama.setText("");
+        txtMotivoIngreso.setText("");
+        txtMedicoAsignado.setText("");
+
+    }
+
+    public void ActualizarDatos() {
+
+        try {
+            String SQL = " update registro_paciente set Nombre=?,Apellido=?,NúmeroSala=?,Área=?,NúmeroCama=?,MotivoIngreso=?,MédicoAsignado=? where Cédula=? ";
+            int filaSeleccionada = tblTablaInternado.getSelectedRow();
+            String dao = (String) tblTablaInternado.getValueAt(filaSeleccionada, 0);
+            PreparedStatement pst = con.prepareStatement(SQL);
+
+            pst.setString(1, txtNombre.getText());
+            pst.setString(2, txtApellido.getText());
+            pst.setString(3, txtNumeroSala.getText());
+            pst.setString(4, txtArea.getText());
+            pst.setString(5, txtNumeroCama.getText());
+            pst.setString(6, txtMotivoIngreso.getText());
+            pst.setString(7, txtMedicoAsignado.getText());
+
+            pst.setString(8, dao);
+            pst.executeUpdate();
+            JOptionPane.showMessageDialog(null, "Registro Actualizado Exitoso");
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Error de Actualiación" + e.getMessage());
+        }
+    }
 
     /**
      * @param args the command line arguments

@@ -1,10 +1,22 @@
 package Registros;
 
+import Metodos_SQL.ConexionBD;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+
 public class Frm_cita_medica extends javax.swing.JFrame {
+
+    ConexionBD cc = new ConexionBD();
+    Connection con = cc.conectar();
 
     public Frm_cita_medica() {
         initComponents();
-
+        this.setLocationRelativeTo(null);
+        mostrarDatos();
     }
 
     @SuppressWarnings("unchecked")
@@ -379,23 +391,42 @@ public class Frm_cita_medica extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void tblCitaMMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblCitaMMouseClicked
-
+        int filaSeleccionada = tblCitaM.rowAtPoint(evt.getPoint());
+        bloquear();
+        txtCedula.setText(tblCitaM.getValueAt(filaSeleccionada, 0).toString());
+        txtNombre.setText(tblCitaM.getValueAt(filaSeleccionada, 1).toString());
+        txtApellido.setText(tblCitaM.getValueAt(filaSeleccionada, 2).toString());
+        txtTelefono.setText(tblCitaM.getValueAt(filaSeleccionada, 3).toString());
+        txtCorreo.setText(tblCitaM.getValueAt(filaSeleccionada, 4).toString());
+        txtDireccion.setText(tblCitaM.getValueAt(filaSeleccionada, 5).toString());
+        dateFechaCita.setText(tblCitaM.getValueAt(filaSeleccionada, 6).toString());
+        txyHorario.setText(tblCitaM.getValueAt(filaSeleccionada, 7).toString());
+        txtMedicoAsignado.setText(tblCitaM.getValueAt(filaSeleccionada, 8).toString());
     }//GEN-LAST:event_tblCitaMMouseClicked
 
     private void btnActualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnActualizarActionPerformed
-
+        ActualizarDatos();
+        desbloquear();
+        limpiarCajas();
+        mostrarDatos();
     }//GEN-LAST:event_btnActualizarActionPerformed
 
     private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarActionPerformed
-
+        insertarDatos();
+        limpiarCajas();
+        mostrarDatos();
     }//GEN-LAST:event_btnGuardarActionPerformed
 
     private void btnNuevoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNuevoActionPerformed
-
+        desbloquear();
+        limpiarCajas();
     }//GEN-LAST:event_btnNuevoActionPerformed
 
     private void btnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarActionPerformed
-
+        eliminarRegistros();
+        desbloquear();
+        mostrarDatos();
+        limpiarCajas();
     }//GEN-LAST:event_btnEliminarActionPerformed
 
     private void txtCedulaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtCedulaActionPerformed
@@ -407,12 +438,170 @@ public class Frm_cita_medica extends javax.swing.JFrame {
     }//GEN-LAST:event_txtTelefonoActionPerformed
 
     private void txtBuscarKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtBuscarKeyReleased
-
+        filtrarDatos(txtBuscar.getText());
     }//GEN-LAST:event_txtBuscarKeyReleased
+    public void bloquear() {
+        txtCedula.setEnabled(false);
+        txtNombre.setEnabled(false);
+        txtApellido.setEnabled(false);
+    }
 
+    public void desbloquear() {
+        txtCedula.setEnabled(true);
+        txtNombre.setEnabled(true);
+        txtApellido.setEnabled(true);
+    }
     private void btnRegresarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegresarActionPerformed
-
+        Frm_login ventanaLogin = new Frm_login();
+        ventanaLogin.setVisible(true);
+        this.dispose();
     }//GEN-LAST:event_btnRegresarActionPerformed
+    public void limpiarCajas() {
+
+        txtCedula.setText("");
+        txtNombre.setText("");
+        txtApellido.setText("");
+        txtTelefono.setText("");
+        txtCorreo.setText("");
+        txtDireccion.setText("");
+        dateFechaCita.setText("");
+        txyHorario.setText("");
+        txtMedicoAsignado.setText("");
+    }
+
+    public void mostrarDatos() {
+
+        String[] titulos = {"Cédula", "Nombre", "Apellido", "Dirección", "Teléfono", "Correo", "Fecha", "HoraConsulta", "MedicoAsignado"};
+        String[] registros = new String[10];
+        DefaultTableModel modelo = new DefaultTableModel(null, titulos);
+
+        String SQL = "select * from cita_medica";
+
+        try {
+
+            Statement st = con.createStatement();
+            ResultSet rs = st.executeQuery(SQL);
+
+            while (rs.next()) {
+                registros[0] = rs.getString("Cédula");
+                registros[1] = rs.getString("Nombre");
+                registros[2] = rs.getString("Apellido");
+                registros[3] = rs.getString("Dirección");
+                registros[4] = rs.getString("Teléfono");
+                registros[5] = rs.getString("Correo");
+                registros[6] = rs.getString("Fecha");
+                registros[7] = rs.getString("HoraConsulta");
+                registros[8] = rs.getString("MedicoAsignado");
+
+                modelo.addRow(registros);
+
+            }
+            tblCitaM.setModel(modelo);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Error al Mostrar Datos" + e);
+        }
+
+    }
+
+    public void filtrarDatos(String valor) {
+
+        String[] titulos = {"Cédula", "Nombre", "Apellido", "Dirección", "Teléfono", "Correo", "Fecha", "HoraConsulta", "MedicoAsignado"};
+        String[] registros = new String[10];
+        DefaultTableModel modelo = new DefaultTableModel(null, titulos);
+
+        String SQL = "select * from cita_medica where Cédula like '%" + valor + "%'";
+
+        try {
+
+            Statement st = con.createStatement();
+            ResultSet rs = st.executeQuery(SQL);
+
+            while (rs.next()) {
+                registros[0] = rs.getString("Cédula");
+                registros[1] = rs.getString("Nombre");
+                registros[2] = rs.getString("Apellido");
+                registros[3] = rs.getString("Dirección");
+                registros[4] = rs.getString("Teléfono");
+                registros[5] = rs.getString("Correo");
+                registros[6] = rs.getString("Fecha");
+                registros[7] = rs.getString("HoraConsulta");
+                registros[8] = rs.getString("MedicoAsignado");
+
+                modelo.addRow(registros);
+
+            }
+            tblCitaM.setModel(modelo);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Error al Mostrar Datos" + e);
+        }
+
+    }
+
+    public void insertarDatos() {
+
+        try {
+            String SQL = "insert into cita_medica(Cédula,Nombre,Apellido,Dirección,Teléfono,Correo,Fecha,HoraConsulta,MedicoAsignado)value(?,?,?,?,?,?,?,?,?)";
+
+            PreparedStatement pst = con.prepareStatement(SQL);
+            pst.setString(1, txtCedula.getText());
+            pst.setString(2, txtNombre.getText());
+            pst.setString(3, txtApellido.getText());
+            pst.setString(4, txtDireccion.getText());
+            pst.setString(5, txtTelefono.getText());
+            pst.setString(6, txtCorreo.getText());
+            pst.setString(7, dateFechaCita.getText());
+            pst.setString(8, txyHorario.getText());
+            pst.setString(9, txtMedicoAsignado.getText());
+
+            pst.execute();
+            JOptionPane.showMessageDialog(null, "Registro exitoso");
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Error de Registro" + e.getMessage());
+        }
+    }
+
+    public void ActualizarDatos() {
+
+        try {
+            String SQL = " update cita_medica set Nombre=?,Apellido=?,Dirección=?,Teléfono=?,Correo=?,Fecha=?,HoraConsulta=?,MedicoAsignado=? where Cédula=? ";
+            int filaSeleccionada = tblCitaM.getSelectedRow();
+            String dao = (String) tblCitaM.getValueAt(filaSeleccionada, 0);
+            PreparedStatement pst = con.prepareStatement(SQL);
+
+            pst.setString(1, txtNombre.getText());
+            pst.setString(2, txtApellido.getText());
+            pst.setString(3, txtTelefono.getText());
+            pst.setString(4, txtDireccion.getText());
+            pst.setString(5, txtCorreo.getText());
+            pst.setString(6, dateFechaCita.getText());
+            pst.setString(7, txyHorario.getText());
+            pst.setString(8, txtMedicoAsignado.getText());
+
+            pst.setString(9, dao);
+
+            pst.executeUpdate();
+            JOptionPane.showMessageDialog(null, "Registro Actualizado Exitoso");
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Error de Actualiación" + e.getMessage());
+        }
+    }
+
+    public void eliminarRegistros() {
+        int filaSeleccionada = tblCitaM.getSelectedRow();
+
+        try {
+            String SQL = "delete from cita_medica where Cédula=" + tblCitaM.getValueAt(filaSeleccionada, 0);
+
+            Statement st = con.createStatement();
+            int n = st.executeUpdate(SQL);
+
+            if (n >= 0) {
+                JOptionPane.showMessageDialog(null, "Registro Eliminado");
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Error al Eliminar Registro" + e.getMessage());
+        }
+    }
 
     /**
      * @param args the command line arguments

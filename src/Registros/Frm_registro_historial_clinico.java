@@ -598,9 +598,9 @@ public class Frm_registro_historial_clinico extends javax.swing.JFrame {
 
             pst.setString(12, dao);
             pst.executeUpdate();
-            JOptionPane.showMessageDialog(null, "Registro Insertado Exitoso");
+            JOptionPane.showMessageDialog(null, "Registro  Exitoso");
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "Error de inserción" + e.getMessage());
+            JOptionPane.showMessageDialog(null, "Error de Registro" + e.getMessage());
         }
 
     }

@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package Registros;
 
 import Metodos_SQL.ConexionBD;
@@ -13,10 +8,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import javax.swing.JOptionPane;
 
-/**
- *
- * @author copar
- */
 public class Frm_login extends javax.swing.JFrame {
 
     public Frm_login() {
@@ -25,10 +16,7 @@ public class Frm_login extends javax.swing.JFrame {
     }
     Metodos_SQL metodos = new Metodos_SQL();
 
-    /**
-     * Creates new form Frm_logi
-     */
- public void validarAdmin() {
+    public void validarAdmin() {
 
         String usuario = txtCorreo.getText();
         String contraseña = txtContraseña.getText();
@@ -36,8 +24,10 @@ public class Frm_login extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(null, "Por favor digite sus credenciales");
         } else {
             if (usuario.equals("Gerente") && contraseña.equals("123")) {
+                Frm_registro_personal_medico ventana = new Frm_registro_personal_medico();
+                ventana.setVisible(true);
+                this.setVisible(false);
 
-                
                 this.setVisible(false);
 
             } else {
@@ -55,13 +45,17 @@ public class Frm_login extends javax.swing.JFrame {
 
                         if (contraseña.equals(c)) {
                             if (s.equals("Enfermero")) {
-                               
-
+                                Frm_registrar_paciente ventanaPaciente = new Frm_registrar_paciente();
+                                ventanaPaciente.setVisible(true);
+                                this.setVisible(false);
                             } else if (s.equals("Médico")) {
-                               
-
+                                Frm_registro_historial_clinico ventanaClinico = new Frm_registro_historial_clinico();
+                                ventanaClinico.setVisible(true);
+                                this.setVisible(false);
                             } else if (s.equals("Auxiliar")) {
-                             
+                                Frm_cita_medica ventanaCitaMedica = new Frm_cita_medica();
+                                ventanaCitaMedica.setVisible(true);
+                                this.setVisible(false);
                             }
 
                         } else {
@@ -236,7 +230,7 @@ public class Frm_login extends javax.swing.JFrame {
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
-    
+
         Frm_registrar_usuarios ventana = new Frm_registrar_usuarios();
         ventana.setVisible(true);
         this.dispose();
@@ -244,7 +238,7 @@ public class Frm_login extends javax.swing.JFrame {
 
     private void btnEntrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEntrarActionPerformed
         // TODO add your handling code here:
-   validarAdmin();
+        validarAdmin();
     }//GEN-LAST:event_btnEntrarActionPerformed
 
     /**

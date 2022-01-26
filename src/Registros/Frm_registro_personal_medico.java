@@ -1,16 +1,24 @@
 package Registros;
 
-
+import Metodos_SQL.ConexionBD;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 
 public class Frm_registro_personal_medico extends javax.swing.JFrame {
 
- 
+    ConexionBD cc = new ConexionBD();
+    Connection con = cc.conectar();
+
     public Frm_registro_personal_medico() {
         initComponents();
-        
+        this.setLocationRelativeTo(null);
+        mostrarDatos();
     }
 
-    
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -390,28 +398,57 @@ public class Frm_registro_personal_medico extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void txtBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtBuscarActionPerformed
-       
+
     }//GEN-LAST:event_txtBuscarActionPerformed
 
     private void tablaRegistroMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablaRegistroMouseClicked
-       
+        int filaSeleccionada = tablaRegistro.rowAtPoint(evt.getPoint());
+        bloquear();
+        txtCedula.setText(tablaRegistro.getValueAt(filaSeleccionada, 0).toString());
+        txtNombre.setText(tablaRegistro.getValueAt(filaSeleccionada, 1).toString());
+        txtApellido.setText(tablaRegistro.getValueAt(filaSeleccionada, 2).toString());
+        jDateFecha.setText(tablaRegistro.getValueAt(filaSeleccionada, 3).toString());
+        cbSexo.setSelectedItem(tablaRegistro.getValueAt(filaSeleccionada, 4));
+        txtDireccion.setText(tablaRegistro.getValueAt(filaSeleccionada, 5).toString());
+        txtNacionalidad.setText(tablaRegistro.getValueAt(filaSeleccionada, 6).toString());
+        txtEspecialidad.setText(tablaRegistro.getValueAt(filaSeleccionada, 7).toString());
+        txtExperienciaLaboral.setText(tablaRegistro.getValueAt(filaSeleccionada, 8).toString());
     }//GEN-LAST:event_tablaRegistroMouseClicked
-   
+    public void bloquear() {
+        txtCedula.setEnabled(false);
+        txtNombre.setEnabled(false);
+        txtApellido.setEnabled(false);
+    }
+
+    public void desbloquear() {
+        txtCedula.setEnabled(true);
+        txtNombre.setEnabled(true);
+        txtApellido.setEnabled(true);
+    }
     private void btnActualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnActualizarActionPerformed
-        
+        ActualizarDatos();
+        desbloquear();
+        limpiarCajas();
+        mostrarDatos();
     }//GEN-LAST:event_btnActualizarActionPerformed
 
     private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarActionPerformed
-     
+        insertarDatos();
+        limpiarCajas();
+        mostrarDatos();
     }//GEN-LAST:event_btnGuardarActionPerformed
 
     private void btnNuevoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNuevoActionPerformed
-        
-     
+        limpiarCajas();
+        desbloquear();
+
     }//GEN-LAST:event_btnNuevoActionPerformed
 
     private void btnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarActionPerformed
-     
+        eliminarRegistros();
+        desbloquear();
+        mostrarDatos();
+        limpiarCajas();
     }//GEN-LAST:event_btnEliminarActionPerformed
 
     private void cbSexoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbSexoActionPerformed
@@ -423,13 +460,162 @@ public class Frm_registro_personal_medico extends javax.swing.JFrame {
     }//GEN-LAST:event_txtCedulaActionPerformed
 
     private void btnRegresarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegresarActionPerformed
-       
+        Frm_login ventana = new Frm_login();
+        ventana.setVisible(true);
+        this.dispose();
     }//GEN-LAST:event_btnRegresarActionPerformed
 
     private void txtBuscarKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtBuscarKeyReleased
-    
+        filtrarDatos(txtBuscar.getText());
     }//GEN-LAST:event_txtBuscarKeyReleased
-   
+    public void limpiarCajas() {
+
+        txtCedula.setText("");
+        txtNombre.setText("");
+        txtApellido.setText("");
+        jDateFecha.setText("");
+        cbSexo.setSelectedItem(null);
+        txtDireccion.setText("");
+        txtNacionalidad.setText("");
+        txtEspecialidad.setText("");
+        txtExperienciaLaboral.setText("");
+    }
+
+    public void mostrarDatos() {
+
+        String[] titulos = {"Cédula", "Nombre", "Apellido", "FechaNacimiento", "Sexo", "Dirección", "Nacionalidad", "Especialidad", "ExperienciaLaboral"};
+        String[] registros = new String[9];
+        DefaultTableModel modelo = new DefaultTableModel(null, titulos);
+
+        String SQL = "select * from registro_personal_medico";
+
+        try {
+
+            Statement st = con.createStatement();
+            ResultSet rs = st.executeQuery(SQL);
+
+            while (rs.next()) {
+                registros[0] = rs.getString("Cédula");
+                registros[1] = rs.getString("Nombre");
+                registros[2] = rs.getString("Apellido");
+                registros[3] = rs.getString("FechaNacimiento");
+                registros[4] = rs.getString("Sexo");
+                registros[5] = rs.getString("Dirección");
+                registros[6] = rs.getString("Nacionalidad");
+                registros[7] = rs.getString("Especialidad");
+                registros[8] = rs.getString("ExperienciaLaboral");
+
+                modelo.addRow(registros);
+
+            }
+            tablaRegistro.setModel(modelo);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Error al Mostrar Datos" + e);
+        }
+
+    }
+
+    public void filtrarDatos(String valor) {
+
+        String[] titulos = {"Cédula", "Nombre", "Apellido", "FechaNacimiento", "Sexo", "Dirección", "Nacionalidad", "Especialidad", "ExperienciaLaboral"};
+        String[] registros = new String[9];
+        DefaultTableModel modelo = new DefaultTableModel(null, titulos);
+
+        String SQL = "select * from registro_personal_medico where Cédula like '%" + valor + "%'";
+
+        try {
+
+            Statement st = con.createStatement();
+            ResultSet rs = st.executeQuery(SQL);
+
+            while (rs.next()) {
+                registros[0] = rs.getString("Cédula");
+                registros[1] = rs.getString("Nombre");
+                registros[2] = rs.getString("Apellido");
+                registros[3] = rs.getString("FechaNacimiento");
+                registros[4] = rs.getString("Sexo");
+                registros[5] = rs.getString("Dirección");
+                registros[6] = rs.getString("Nacionalidad");
+                registros[7] = rs.getString("Especialidad");
+                registros[8] = rs.getString("ExperienciaLaboral");
+
+                modelo.addRow(registros);
+
+            }
+            tablaRegistro.setModel(modelo);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Error al Mostrar Datos" + e);
+        }
+
+    }
+
+    public void insertarDatos() {
+
+        try {
+            String SQL = "insert into registro_personal_medico(Cédula,Nombre,Apellido,FechaNacimiento,Sexo,Dirección,Nacionalidad,Especialidad,ExperienciaLaboral)value(?,?,?,?,?,?,?,?,?)";
+
+            PreparedStatement pst = con.prepareStatement(SQL);
+            pst.setString(1, txtCedula.getText());
+            pst.setString(2, txtNombre.getText());
+            pst.setString(3, txtApellido.getText());
+            pst.setString(4, jDateFecha.getText());
+            int seleccionado = cbSexo.getSelectedIndex();
+            pst.setString(5, cbSexo.getItemAt(seleccionado));
+            pst.setString(6, txtDireccion.getText());
+            pst.setString(7, txtNacionalidad.getText());
+            pst.setString(8, txtEspecialidad.getText());
+            pst.setString(9, txtExperienciaLaboral.getText());
+
+            pst.execute();
+            JOptionPane.showMessageDialog(null, "Registro exitoso");
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Error de Registro" + e.getMessage());
+        }
+    }
+
+    public void ActualizarDatos() {
+
+        try {
+            String SQL = " update registro_personal_medico set Nombre=?,Apellido=?,FechaNacimiento=?,Sexo=?,Dirección=?,Nacionalidad=?,Especialidad=?,ExperienciaLaboral=? where Cédula=? ";
+            int filaSeleccionada = tablaRegistro.getSelectedRow();
+            String dao = (String) tablaRegistro.getValueAt(filaSeleccionada, 0);
+            PreparedStatement pst = con.prepareStatement(SQL);
+
+            pst.setString(1, txtNombre.getText());
+            pst.setString(2, txtApellido.getText());
+            pst.setString(3, jDateFecha.getText());
+            int seleccionado = cbSexo.getSelectedIndex();
+            pst.setString(4, cbSexo.getItemAt(seleccionado));
+            pst.setString(5, txtDireccion.getText());
+            pst.setString(6, txtNacionalidad.getText());
+            pst.setString(7, txtEspecialidad.getText());
+            pst.setString(8, txtExperienciaLaboral.getText());
+
+            pst.setString(9, dao);
+            pst.executeUpdate();
+            JOptionPane.showMessageDialog(null, "Registro Actualizado Exitoso");
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Error de Actualiación" + e.getMessage());
+        }
+    }
+
+    public void eliminarRegistros() {
+        int filaSeleccionada = tablaRegistro.getSelectedRow();
+
+        try {
+            String SQL = "delete from registro_personal_medico where Cédula=" + tablaRegistro.getValueAt(filaSeleccionada, 0);
+
+            Statement st = con.createStatement();
+            int n = st.executeUpdate(SQL);
+
+            if (n >= 0) {
+                JOptionPane.showMessageDialog(null, "Registro Eliminado");
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Error al Eliminar Registro" + e.getMessage());
+        }
+    }
+
     /**
      * @param args the command line arguments
      */

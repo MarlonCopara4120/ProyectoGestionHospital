@@ -1,10 +1,22 @@
 package Registros;
 
+import Metodos_SQL.ConexionBD;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+
 public class Frm_registro_historial_clinico_modificar extends javax.swing.JFrame {
+
+    ConexionBD cc = new ConexionBD();
+    Connection con = cc.conectar();
 
     public Frm_registro_historial_clinico_modificar() {
         initComponents();
-
+        this.setLocationRelativeTo(null);
+        mostrarDatos();
     }
 
     @SuppressWarnings("unchecked")
@@ -368,34 +380,188 @@ public class Frm_registro_historial_clinico_modificar extends javax.swing.JFrame
     }//GEN-LAST:event_txtCedulaActionPerformed
 
     private void btnModificarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnModificarActionPerformed
-
+        ActualizarDatos();
+        desbloquear();
+        limpiarCajas();
+        mostrarDatos();
 
     }//GEN-LAST:event_btnModificarActionPerformed
 
-    private void tblTablaHistorialClinicoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblTablaHistorialClinicoMouseClicked
+    public void bloquear() {
+        txtCedula.setEnabled(false);
+        txtNombre.setEnabled(false);
+        txtApellido.setEnabled(false);
+    }
 
+    public void desbloquear() {
+        txtCedula.setEnabled(true);
+        txtNombre.setEnabled(true);
+        txtApellido.setEnabled(true);
+    }
+    private void tblTablaHistorialClinicoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblTablaHistorialClinicoMouseClicked
+        int filaSeleccionada = tblTablaHistorialClinico.rowAtPoint(evt.getPoint());
+        bloquear();
+        txtCedula.setText(tblTablaHistorialClinico.getValueAt(filaSeleccionada, 0).toString());
+        txtNombre.setText(tblTablaHistorialClinico.getValueAt(filaSeleccionada, 1).toString());
+        txtApellido.setText(tblTablaHistorialClinico.getValueAt(filaSeleccionada, 2).toString());
+        txtPeso.setText(tblTablaHistorialClinico.getValueAt(filaSeleccionada, 3).toString());
+        txtEstatura.setText(tblTablaHistorialClinico.getValueAt(filaSeleccionada, 4).toString());
+        txtAlergias.setText(tblTablaHistorialClinico.getValueAt(filaSeleccionada, 5).toString());
+        txtTipoSangre.setText(tblTablaHistorialClinico.getValueAt(filaSeleccionada, 6).toString());
+        txtPresionArterial.setText(tblTablaHistorialClinico.getValueAt(filaSeleccionada, 7).toString());
+        txtEnfermedades.setText(tblTablaHistorialClinico.getValueAt(filaSeleccionada, 8).toString());
+        txtEnfermedadesHereditarias.setText(tblTablaHistorialClinico.getValueAt(filaSeleccionada, 9).toString());
+        txtMedicacion.setText(tblTablaHistorialClinico.getValueAt(filaSeleccionada, 10).toString());
+        txtRitmoCardiaco.setText(tblTablaHistorialClinico.getValueAt(filaSeleccionada, 11).toString());
 
     }//GEN-LAST:event_tblTablaHistorialClinicoMouseClicked
 
     private void btnRegresarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegresarActionPerformed
-
+        Frm_login ventana = new Frm_login();
+        ventana.setVisible(true);
+        this.dispose();
     }//GEN-LAST:event_btnRegresarActionPerformed
 
     private void txtBuscarKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtBuscarKeyReleased
-
+        filtrarDatos(txtBuscar.getText());
     }//GEN-LAST:event_txtBuscarKeyReleased
 
     private void MenuEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MenuEliminarActionPerformed
-
+        Frm_registro_historial_clinico_eliminar ventana = new Frm_registro_historial_clinico_eliminar();
+        ventana.setVisible(true);
+        this.dispose();
     }//GEN-LAST:event_MenuEliminarActionPerformed
 
     private void MenuRegistrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MenuRegistrarActionPerformed
-
+        Frm_registro_historial_clinico ventanaHistorial = new Frm_registro_historial_clinico();
+        ventanaHistorial.setVisible(true);
+        this.dispose();
     }//GEN-LAST:event_MenuRegistrarActionPerformed
 
     private void txtBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtBuscarActionPerformed
 
     }//GEN-LAST:event_txtBuscarActionPerformed
+    public void limpiarCajas() {
+
+        txtCedula.setText("");
+        txtNombre.setText("");
+        txtApellido.setText("");
+        txtPeso.setText("");
+        txtEstatura.setText("");
+        txtAlergias.setText("");
+        txtTipoSangre.setText("");
+        txtPresionArterial.setText("");
+        txtEnfermedades.setText("");
+        txtEnfermedadesHereditarias.setText("");
+        txtMedicacion.setText("");
+        txtRitmoCardiaco.setText("");
+    }
+
+    public void mostrarDatos() {
+
+        String[] titulos = {"Cédula", "Nombre", "Apellido", "Peso", "Estatura", "Alergias", "TipoSangre", "PresiónArterial", "Enfermedades", "EnfermedadesHereditarias", "Medicación", "RitmoCardíaco"};
+        String[] registros = new String[12];
+
+        //HERE!!!!!
+        DefaultTableModel modelo = new DefaultTableModel(null, titulos);
+
+        String SQL = "select * from registro_paciente";
+
+        try {
+
+            Statement st = con.createStatement();
+            ResultSet rs = st.executeQuery(SQL);
+
+            while (rs.next()) {
+                registros[0] = rs.getString("Cédula");
+                registros[1] = rs.getString("Nombre");
+                registros[2] = rs.getString("Apellido");
+                registros[3] = rs.getString("Peso");
+                registros[4] = rs.getString("Estatura");
+                registros[5] = rs.getString("Alergias");
+                registros[6] = rs.getString("TipoSangre");
+                registros[7] = rs.getString("PresiónArterial");
+                registros[8] = rs.getString("Enfermedades");
+                registros[9] = rs.getString("EnfermedadesHereditarias");
+                registros[10] = rs.getString("Medicación");
+                registros[11] = rs.getString("RitmoCardíaco");
+
+                modelo.addRow(registros);
+
+            }
+            tblTablaHistorialClinico.setModel(modelo);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Error al Mostrar Datos" + e);
+        }
+
+    }
+
+    public void filtrarDatos(String valor) {
+
+        String[] titulos = {"Cédula", "Nombre", "Apellido", "Peso", "Estatura", "Alergias", "TipoSangre", "PresiónArterial", "Enfermedades", "EnfermedadesHereditarias", "Medicación", "RitmoCardíaco"};
+        String[] registros = new String[12];
+
+        //HERE!!!!!
+        DefaultTableModel modelo = new DefaultTableModel(null, titulos);
+
+        String SQL = "select * from registro_paciente  where Cédula like '%" + valor + "%'";
+
+        try {
+
+            Statement st = con.createStatement();
+            ResultSet rs = st.executeQuery(SQL);
+
+            while (rs.next()) {
+                registros[0] = rs.getString("Cédula");
+                registros[1] = rs.getString("Nombre");
+                registros[2] = rs.getString("Apellido");
+                registros[3] = rs.getString("Peso");
+                registros[4] = rs.getString("Estatura");
+                registros[5] = rs.getString("Alergias");
+                registros[6] = rs.getString("TipoSangre");
+                registros[7] = rs.getString("PresiónArterial");
+                registros[8] = rs.getString("Enfermedades");
+                registros[9] = rs.getString("EnfermedadesHereditarias");
+                registros[10] = rs.getString("Medicación");
+                registros[11] = rs.getString("RitmoCardíaco");
+
+                modelo.addRow(registros);
+
+            }
+            tblTablaHistorialClinico.setModel(modelo);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Error al Mostrar Datos" + e);
+        }
+
+    }
+
+    public void ActualizarDatos() {
+
+        try {
+            String SQL = " update registro_paciente set Nombre=?,Apellido=?,Peso=?,Estatura=?,Alergias=?,TipoSangre=?,PresiónArterial=?,Enfermedades=?,EnfermedadesHereditarias=?,Medicación=?,RitmoCardíaco=? where Cédula=? ";
+            int filaSeleccionada = tblTablaHistorialClinico.getSelectedRow();
+            String dao = (String) tblTablaHistorialClinico.getValueAt(filaSeleccionada, 0);
+            PreparedStatement pst = con.prepareStatement(SQL);
+
+            pst.setString(1, txtNombre.getText());
+            pst.setString(2, txtApellido.getText());
+            pst.setString(3, txtPeso.getText());
+            pst.setString(4, txtEstatura.getText());
+            pst.setString(5, txtAlergias.getText());
+            pst.setString(6, txtTipoSangre.getText());
+            pst.setString(7, txtPresionArterial.getText());
+            pst.setString(8, txtEnfermedades.getText());
+            pst.setString(9, txtEnfermedadesHereditarias.getText());
+            pst.setString(10, txtMedicacion.getText());
+            pst.setString(11, txtRitmoCardiaco.getText());
+
+            pst.setString(12, dao);
+            pst.executeUpdate();
+            JOptionPane.showMessageDialog(null, "Registro Actualizado Exitoso");
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Error de Actualiación" + e.getMessage());
+        }
+    }
 
     /**
      * @param args the command line arguments

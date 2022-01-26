@@ -489,9 +489,9 @@ public class Frm_registro_paciente_internado extends javax.swing.JFrame {
 
             pst.setString(8, dao);
             pst.executeUpdate();
-            JOptionPane.showMessageDialog(null, "Registro Actualizado Exitoso");
+            JOptionPane.showMessageDialog(null, "Registro Exitoso");
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "Error de Actualiación" + e.getMessage());
+            JOptionPane.showMessageDialog(null, "Error de Registro" + e.getMessage());
         }
     }
 

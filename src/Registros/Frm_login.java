@@ -5,22 +5,82 @@
  */
 package Registros;
 
+import Metodos_SQL.ConexionBD;
+import Metodos_SQL.Metodos_SQL;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import javax.swing.JOptionPane;
+
 /**
  *
  * @author copar
  */
 public class Frm_login extends javax.swing.JFrame {
 
+    public Frm_login() {
+        initComponents();
+        setLocationRelativeTo(null);
+    }
+    Metodos_SQL metodos = new Metodos_SQL();
+
     /**
      * Creates new form Frm_logi
      */
-    public Frm_login() {
-        initComponents();
-       
+ public void validarAdmin() {
+
+        String usuario = txtCorreo.getText();
+        String contraseña = txtContraseña.getText();
+        if (usuario.equals("") && contraseña.equals("")) {
+            JOptionPane.showMessageDialog(null, "Por favor digite sus credenciales");
+        } else {
+            if (usuario.equals("Gerente") && contraseña.equals("123")) {
+
+                
+                this.setVisible(false);
+
+            } else {
+
+                String sql = "select Nombre,Apellido,Servicio,Usuario,Contraseña from login where Usuario='" + usuario + "'";
+                try {
+                    Connection con = ConexionBD.conectar();
+                    PreparedStatement ps = con.prepareStatement(sql);
+                    ResultSet rs = ps.executeQuery();
+
+                    if (rs.next()) {
+                        String u = rs.getString("Usuario");
+                        String c = rs.getString("Contraseña");
+                        String s = rs.getString("Servicio");
+
+                        if (contraseña.equals(c)) {
+                            if (s.equals("Enfermero")) {
+                               
+
+                            } else if (s.equals("Médico")) {
+                               
+
+                            } else if (s.equals("Auxiliar")) {
+                             
+                            }
+
+                        } else {
+                            JOptionPane.showMessageDialog(null, "LA CONTRASEÑA NO ES CORRECTA");
+
+                        }
+
+                    } else {
+                        JOptionPane.showMessageDialog(null, "EL USUARIO NO EXISTE EN BD");
+                    }
+
+                } catch (SQLException ex) {
+                    System.out.println(ex.toString());
+
+                }
+            }
+        }
 
     }
-   
-
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -176,12 +236,12 @@ public class Frm_login extends javax.swing.JFrame {
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
-       
+
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void btnEntrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEntrarActionPerformed
         // TODO add your handling code here:
-       
+   validarAdmin();
     }//GEN-LAST:event_btnEntrarActionPerformed
 
     /**

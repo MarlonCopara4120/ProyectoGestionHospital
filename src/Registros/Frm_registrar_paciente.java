@@ -1,14 +1,22 @@
 package Registros;
 
-
+import Metodos_SQL.ConexionBD;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 
 public class Frm_registrar_paciente extends javax.swing.JFrame {
 
-  
+    ConexionBD cc = new ConexionBD();
+    Connection con = cc.conectar();
 
     public Frm_registrar_paciente() {
         initComponents();
-       
+        this.setLocationRelativeTo(null);
+        mostrarDatos();
     }
 
     @SuppressWarnings("unchecked")
@@ -350,35 +358,205 @@ public class Frm_registrar_paciente extends javax.swing.JFrame {
     }//GEN-LAST:event_txtNacionalidadActionPerformed
 
     private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarActionPerformed
-
+        insertarDatos();
+        limpiarCajas();
+        mostrarDatos();
     }//GEN-LAST:event_btnGuardarActionPerformed
 
     private void btnActualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnActualizarActionPerformed
-
+        ActualizarDatos();
+        desbloquear();
+        limpiarCajas();
+        mostrarDatos();
     }//GEN-LAST:event_btnActualizarActionPerformed
 
     private void btnNuevoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNuevoActionPerformed
-
+        desbloquear();
+        limpiarCajas();
     }//GEN-LAST:event_btnNuevoActionPerformed
 
     private void btnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarActionPerformed
-
+        eliminarRegistros();
+        desbloquear();
+        mostrarDatos();
+        limpiarCajas();
     }//GEN-LAST:event_btnEliminarActionPerformed
 
     private void tblTablaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblTablaMouseClicked
+        int filaSeleccionada = tblTabla.rowAtPoint(evt.getPoint());
+        bloquear();
 
-      
+        txtCedula.setText(tblTabla.getValueAt(filaSeleccionada, 0).toString());
+        txtNombre.setText(tblTabla.getValueAt(filaSeleccionada, 1).toString());
+        txtApellido.setText(tblTabla.getValueAt(filaSeleccionada, 2).toString());
+        dateFechaNacimiento.setText(tblTabla.getValueAt(filaSeleccionada, 3).toString());
+        txtNacionalidad.setText(tblTabla.getValueAt(filaSeleccionada, 4).toString());
+        cbSexo.setSelectedItem(tblTabla.getValueAt(filaSeleccionada, 5));
+        txtDireccion.setText(tblTabla.getValueAt(filaSeleccionada, 6).toString());
+
     }//GEN-LAST:event_tblTablaMouseClicked
-   
+    public void bloquear() {
+        txtCedula.setEnabled(false);
+        txtNombre.setEnabled(false);
+        txtApellido.setEnabled(false);
+    }
+
+    public void desbloquear() {
+        txtCedula.setEnabled(true);
+        txtNombre.setEnabled(true);
+        txtApellido.setEnabled(true);
+    }
+
     private void btnRegresarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegresarActionPerformed
-      
+        Frm_login ventana = new Frm_login();
+        ventana.setVisible(true);
+        this.dispose();
 
     }//GEN-LAST:event_btnRegresarActionPerformed
 
     private void txtBuscarKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtBuscarKeyReleased
-      
+        filtrarDatos(txtBuscar.getText());
     }//GEN-LAST:event_txtBuscarKeyReleased
+    public void limpiarCajas() {
 
+        txtCedula.setText("");
+        txtNombre.setText("");
+        txtApellido.setText("");
+        dateFechaNacimiento.setText("");
+        txtNacionalidad.setText("");
+        cbSexo.setSelectedItem(null);
+        txtDireccion.setText("");
+
+    }
+
+    public void mostrarDatos() {
+
+        String[] titulos = {"Cédula", "Nombre", "Apellido", "FechaNacimiento", "Nacionalidad", "Sexo", "Dirección"};
+        String[] registros = new String[7];
+
+        DefaultTableModel modelo = new DefaultTableModel(null, titulos);
+
+        String SQL = "select * from registro_paciente";
+
+        try {
+
+            Statement st = con.createStatement();
+            ResultSet rs = st.executeQuery(SQL);
+
+            while (rs.next()) {
+                registros[0] = rs.getString("Cédula");
+                registros[1] = rs.getString("Nombre");
+                registros[2] = rs.getString("Apellido");
+                registros[3] = rs.getString("FechaNacimiento");
+                registros[4] = rs.getString("Nacionalidad");
+                registros[5] = rs.getString("Sexo");
+                registros[6] = rs.getString("Dirección");
+
+                modelo.addRow(registros);
+
+            }
+            tblTabla.setModel(modelo);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Error al Mostrar Datos" + e);
+        }
+
+    }
+
+    public void filtrarDatos(String valor) {
+
+        String[] titulos = {"Cédula", "Nombre", "Apellido", "FechaNacimiento", "Nacionalidad", "Sexo", "Dirección"};
+        String[] registros = new String[7];
+
+        DefaultTableModel modelo = new DefaultTableModel(null, titulos);
+
+        String SQL = "select * from registro_paciente where Cédula like '%" + valor + "%'";
+
+        try {
+
+            Statement st = con.createStatement();
+            ResultSet rs = st.executeQuery(SQL);
+
+            while (rs.next()) {
+                registros[0] = rs.getString("Cédula");
+                registros[1] = rs.getString("Nombre");
+                registros[2] = rs.getString("Apellido");
+                registros[3] = rs.getString("FechaNacimiento");
+                registros[4] = rs.getString("Nacionalidad");
+                registros[5] = rs.getString("Sexo");
+                registros[6] = rs.getString("Dirección");
+
+                modelo.addRow(registros);
+
+            }
+            tblTabla.setModel(modelo);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Error al Mostrar Datos" + e);
+        }
+
+    }
+
+    public void insertarDatos() {
+
+        try {
+            String SQL = "insert into registro_paciente(Cédula,Nombre,Apellido,FechaNacimiento,Nacionalidad,Sexo,Dirección)value(?,?,?,?,?,?,?)";
+
+            PreparedStatement pst = con.prepareStatement(SQL);
+            pst.setString(1, txtCedula.getText());
+            pst.setString(2, txtNombre.getText());
+            pst.setString(3, txtApellido.getText());
+            pst.setString(4, dateFechaNacimiento.getText());
+            pst.setString(5, txtNacionalidad.getText());
+            int seleccionado = cbSexo.getSelectedIndex();
+            pst.setString(6, cbSexo.getItemAt(seleccionado));
+            pst.setString(7, txtDireccion.getText());
+
+            pst.execute();
+            JOptionPane.showMessageDialog(null, "Registro exitoso");
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Error de Registro" + e.getMessage());
+        }
+    }
+
+    public void ActualizarDatos() {
+
+        try {
+            String SQL = " update registro_paciente set Nombre=?,Apellido=?,FechaNacimiento=?,Nacionalidad=?,Sexo=?,Dirección=? where Cédula=? ";
+            int filaSeleccionada = tblTabla.getSelectedRow();
+            String dao = (String) tblTabla.getValueAt(filaSeleccionada, 0);
+            PreparedStatement pst = con.prepareStatement(SQL);
+
+            pst.setString(1, txtNombre.getText());
+            pst.setString(2, txtApellido.getText());
+            pst.setString(3, dateFechaNacimiento.getText());
+            pst.setString(4, txtNacionalidad.getText());
+            int seleccionado = cbSexo.getSelectedIndex();
+            pst.setString(5, cbSexo.getItemAt(seleccionado));
+            pst.setString(6, txtDireccion.getText());
+
+            pst.setString(7, dao);
+            pst.executeUpdate();
+            JOptionPane.showMessageDialog(null, "Registro Actualizado Exitoso");
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Error de Actualiación" + e.getMessage());
+        }
+    }
+
+    public void eliminarRegistros() {
+        int filaSeleccionada = tblTabla.getSelectedRow();
+
+        try {
+            String SQL = "delete from registro_paciente where Cédula=" + tblTabla.getValueAt(filaSeleccionada, 0);
+
+            Statement st = con.createStatement();
+            int n = st.executeUpdate(SQL);
+
+            if (n >= 0) {
+                JOptionPane.showMessageDialog(null, "Registro Eliminado");
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Error al Eliminar Registro" + e.getMessage());
+        }
+    }
 
     /**
      * @param args the command line arguments

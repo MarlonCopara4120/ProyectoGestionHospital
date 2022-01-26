@@ -1,11 +1,18 @@
 package Registros;
 
+import Metodos_SQL.Metodos_SQL;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
+
 public class Frm_registrar_usuarios extends javax.swing.JFrame {
 
-    public Frm_registrar_usuarios() {
+     public Frm_registrar_usuarios() {
         initComponents();
-
+        setLocationRelativeTo(null);
     }
+    Metodos_SQL metodos = new Metodos_SQL();
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -292,12 +299,40 @@ public class Frm_registrar_usuarios extends javax.swing.JFrame {
     }//GEN-LAST:event_txtApellidosActionPerformed
 
     private void btnRegresarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegresarActionPerformed
-
+ Frm_login ventana = new Frm_login();
+        ventana.setVisible(true);
+        this.dispose();
 
     }//GEN-LAST:event_btnRegresarActionPerformed
+  public void limpiarCajas() {
 
+        txtNombre.setText("");
+        txtApellidos.setText("");
+        cbServicio.setSelectedItem(null);
+        txtCorreo.setText("");
+        txtContraseña.setText("");
+
+    }
     private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarActionPerformed
+ try {
+            int seleccionado = cbServicio.getSelectedIndex();
 
+            if (txtApellidos.getText().equals("") && (txtNombre.getText().equals("")) && (txtCorreo.getText().equals("")) && (txtContraseña.getText().equals(""))) {
+                JOptionPane.showMessageDialog(this, "Existen campos vacios");
+            } else {
+
+                int i = metodos.guardar(txtNombre.getText(), txtApellidos.getText(), cbServicio.getItemAt(seleccionado), txtCorreo.getText(), txtContraseña.getText());
+                limpiarCajas();
+                if (i > 0) {
+                    JOptionPane.showMessageDialog(this, "Datos Guardados Correctamente");
+
+                } else {
+                    JOptionPane.showMessageDialog(this, "No se pudo guardar los datos");
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(Frm_registrar_usuarios.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
     }//GEN-LAST:event_btnGuardarActionPerformed
 

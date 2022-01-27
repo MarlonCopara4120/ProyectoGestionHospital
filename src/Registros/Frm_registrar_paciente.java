@@ -496,65 +496,83 @@ public class Frm_registrar_paciente extends javax.swing.JFrame {
     }
 
     public void insertarDatos() {
+        int selec = cbSexo.getSelectedIndex();
 
-        try {
-            String SQL = "insert into registro_paciente(Cédula,Nombre,Apellido,FechaNacimiento,Nacionalidad,Sexo,Dirección)value(?,?,?,?,?,?,?)";
+        if ((txtCedula.getText().isEmpty()) || (txtNombre.getText().isEmpty()) || (txtApellido.getText().isEmpty()) || (dateFechaNacimiento.getText().isEmpty()) || (txtNacionalidad.getText().isEmpty()) || (cbSexo.getItemAt(selec).isEmpty()) || (txtDireccion.getText().isEmpty())) {
+            JOptionPane.showMessageDialog(this, "Existen campos vacíos");
+        } else {
 
-            PreparedStatement pst = con.prepareStatement(SQL);
-            pst.setString(1, txtCedula.getText());
-            pst.setString(2, txtNombre.getText());
-            pst.setString(3, txtApellido.getText());
-            pst.setString(4, dateFechaNacimiento.getText());
-            pst.setString(5, txtNacionalidad.getText());
-            int seleccionado = cbSexo.getSelectedIndex();
-            pst.setString(6, cbSexo.getItemAt(seleccionado));
-            pst.setString(7, txtDireccion.getText());
+            try {
+                String SQL = "insert into registro_paciente(Cédula,Nombre,Apellido,FechaNacimiento,Nacionalidad,Sexo,Dirección)value(?,?,?,?,?,?,?)";
 
-            pst.execute();
-            JOptionPane.showMessageDialog(null, "Registro exitoso");
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "Error de Registro" + e.getMessage());
+                PreparedStatement pst = con.prepareStatement(SQL);
+                pst.setString(1, txtCedula.getText());
+                pst.setString(2, txtNombre.getText());
+                pst.setString(3, txtApellido.getText());
+                pst.setString(4, dateFechaNacimiento.getText());
+                pst.setString(5, txtNacionalidad.getText());
+                int seleccionado = cbSexo.getSelectedIndex();
+                pst.setString(6, cbSexo.getItemAt(seleccionado));
+                pst.setString(7, txtDireccion.getText());
+
+                pst.execute();
+                JOptionPane.showMessageDialog(null, "Registro exitoso");
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(null, "Error de Registro" + e.getMessage());
+            }
         }
     }
 
     public void ActualizarDatos() {
 
-        try {
-            String SQL = " update registro_paciente set Nombre=?,Apellido=?,FechaNacimiento=?,Nacionalidad=?,Sexo=?,Dirección=? where Cédula=? ";
-            int filaSeleccionada = tblTabla.getSelectedRow();
-            String dao = (String) tblTabla.getValueAt(filaSeleccionada, 0);
-            PreparedStatement pst = con.prepareStatement(SQL);
+        int selec = cbSexo.getSelectedIndex();
 
-            pst.setString(1, txtNombre.getText());
-            pst.setString(2, txtApellido.getText());
-            pst.setString(3, dateFechaNacimiento.getText());
-            pst.setString(4, txtNacionalidad.getText());
-            int seleccionado = cbSexo.getSelectedIndex();
-            pst.setString(5, cbSexo.getItemAt(seleccionado));
-            pst.setString(6, txtDireccion.getText());
+        if ((txtCedula.getText().isEmpty()) || (txtNombre.getText().isEmpty()) || (txtApellido.getText().isEmpty()) || (dateFechaNacimiento.getText().isEmpty()) || (txtNacionalidad.getText().isEmpty()) || (cbSexo.getItemAt(selec).isEmpty()) || (txtDireccion.getText().isEmpty())) {
+            JOptionPane.showMessageDialog(this, "No se ha seleccionado a los datos del paciente");
+        } else {
 
-            pst.setString(7, dao);
-            pst.executeUpdate();
-            JOptionPane.showMessageDialog(null, "Registro Actualizado Exitoso");
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "Error de Actualiación" + e.getMessage());
+            try {
+                String SQL = " update registro_paciente set Nombre=?,Apellido=?,FechaNacimiento=?,Nacionalidad=?,Sexo=?,Dirección=? where Cédula=? ";
+                int filaSeleccionada = tblTabla.getSelectedRow();
+                String dao = (String) tblTabla.getValueAt(filaSeleccionada, 0);
+                PreparedStatement pst = con.prepareStatement(SQL);
+
+                pst.setString(1, txtNombre.getText());
+                pst.setString(2, txtApellido.getText());
+                pst.setString(3, dateFechaNacimiento.getText());
+                pst.setString(4, txtNacionalidad.getText());
+                int seleccionado = cbSexo.getSelectedIndex();
+                pst.setString(5, cbSexo.getItemAt(seleccionado));
+                pst.setString(6, txtDireccion.getText());
+
+                pst.setString(7, dao);
+                pst.executeUpdate();
+                JOptionPane.showMessageDialog(null, "Registro Actualizado");
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(null, "Error de Actualización" + e.getMessage());
+            }
         }
     }
 
     public void eliminarRegistros() {
+
         int filaSeleccionada = tblTabla.getSelectedRow();
+        if ((txtCedula.getText().isEmpty()) || (txtNombre.getText().isEmpty()) || (txtApellido.getText().isEmpty()) || (dateFechaNacimiento.getText().isEmpty()) || (txtNacionalidad.getText().isEmpty()) || (cbSexo.getItemAt(filaSeleccionada).isEmpty()) || (txtDireccion.getText().isEmpty())) {
+            JOptionPane.showMessageDialog(this, "No se ha seleccionado los datos del paciente");
+        } else {
+            try {
+                String SQL = "delete from registro_paciente where Cédula=" + tblTabla.getValueAt(filaSeleccionada, 0);
 
-        try {
-            String SQL = "delete from registro_paciente where Cédula=" + tblTabla.getValueAt(filaSeleccionada, 0);
+                Statement st = con.createStatement();
+                int n = st.executeUpdate(SQL);
 
-            Statement st = con.createStatement();
-            int n = st.executeUpdate(SQL);
+                if (n >= 0) {
+                    JOptionPane.showMessageDialog(null, "Registro Eliminado");
+                }
 
-            if (n >= 0) {
-                JOptionPane.showMessageDialog(null, "Registro Eliminado");
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(null, "Error al Eliminar Registro" + e.getMessage());
             }
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "Error al Eliminar Registro" + e.getMessage());
         }
     }
 

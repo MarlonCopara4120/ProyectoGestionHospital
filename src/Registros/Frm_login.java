@@ -59,12 +59,12 @@ public class Frm_login extends javax.swing.JFrame {
                             }
 
                         } else {
-                            JOptionPane.showMessageDialog(null, "LA CONTRASEÑA NO ES CORRECTA");
+                            JOptionPane.showMessageDialog(null, "La contraseña no es correcta");
 
                         }
 
                     } else {
-                        JOptionPane.showMessageDialog(null, "EL USUARIO NO EXISTE EN BD");
+                        JOptionPane.showMessageDialog(null, "El usuario no existe");
                     }
 
                 } catch (SQLException ex) {

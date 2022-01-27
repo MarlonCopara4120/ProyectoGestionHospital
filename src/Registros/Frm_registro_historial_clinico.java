@@ -578,29 +578,38 @@ public class Frm_registro_historial_clinico extends javax.swing.JFrame {
 
     public void insertarDatos() {
 
-        try {
-            String SQL = " update registro_paciente set Nombre=?,Apellido=?,Peso=?,Estatura=?,Alergias=?,TipoSangre=?,PresiónArterial=?,Enfermedades=?,EnfermedadesHereditarias=?,Medicación=?,RitmoCardíaco=? where Cédula=? ";
-            int filaSeleccionada = tblTablaHistorialClinico.getSelectedRow();
-            String dao = (String) tblTablaHistorialClinico.getValueAt(filaSeleccionada, 0);
-            PreparedStatement pst = con.prepareStatement(SQL);
+        if ((txtCedula.getText().isEmpty()) || (txtNombre.getText().isEmpty()) || (txtApellido.getText().isEmpty()) || (txtPeso.getText().isEmpty()) || (txtEstatura.getText().isEmpty())
+                || (txtAlergias.getText().isEmpty()) || (txtTipoSangre.getText().isEmpty()) || (txtPresionArterial.getText().isEmpty()) || (txtEnfermedades.getText().isEmpty())
+                || (txtEnfermedadesHereditarias.getText().isEmpty()) || (txtMedicacion.getText().isEmpty()) || (txtRitmoCardiaco.getText().isEmpty())) {
 
-            pst.setString(1, txtNombre.getText());
-            pst.setString(2, txtApellido.getText());
-            pst.setString(3, txtPeso.getText());
-            pst.setString(4, txtEstatura.getText());
-            pst.setString(5, txtAlergias.getText());
-            pst.setString(6, txtTipoSangre.getText());
-            pst.setString(7, txtPresionArterial.getText());
-            pst.setString(8, txtEnfermedades.getText());
-            pst.setString(9, txtEnfermedadesHereditarias.getText());
-            pst.setString(10, txtMedicacion.getText());
-            pst.setString(11, txtRitmoCardiaco.getText());
+            JOptionPane.showMessageDialog(this, "No se ha seleccionado los datos del paciente");
+        } else {
 
-            pst.setString(12, dao);
-            pst.executeUpdate();
-            JOptionPane.showMessageDialog(null, "Registro  Exitoso");
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "Error de Registro" + e.getMessage());
+            try {
+                String SQL = " update registro_paciente set Nombre=?,Apellido=?,Peso=?,Estatura=?,Alergias=?,TipoSangre=?,PresiónArterial=?,Enfermedades=?,EnfermedadesHereditarias=?,Medicación=?,RitmoCardíaco=? where Cédula=? ";
+                int filaSeleccionada = tblTablaHistorialClinico.getSelectedRow();
+                String dao = (String) tblTablaHistorialClinico.getValueAt(filaSeleccionada, 0);
+                PreparedStatement pst = con.prepareStatement(SQL);
+
+             
+                pst.setString(1, txtNombre.getText());
+                pst.setString(2, txtApellido.getText());
+                pst.setString(3, txtPeso.getText());
+                pst.setString(4, txtEstatura.getText());
+                pst.setString(5, txtAlergias.getText());
+                pst.setString(6, txtTipoSangre.getText());
+                pst.setString(7, txtPresionArterial.getText());
+                pst.setString(8, txtEnfermedades.getText());
+                pst.setString(9, txtEnfermedadesHereditarias.getText());
+                pst.setString(10, txtMedicacion.getText());
+                pst.setString(11, txtRitmoCardiaco.getText());
+
+                pst.setString(12, dao);
+                pst.executeUpdate();
+                JOptionPane.showMessageDialog(null, "Registro  Exitoso");
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(null, "Error de Registro" + e.getMessage());
+            }
         }
 
     }

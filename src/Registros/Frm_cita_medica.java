@@ -546,67 +546,87 @@ public class Frm_cita_medica extends javax.swing.JFrame {
 
     public void insertarDatos() {
 
-        try {
-            String SQL = "insert into cita_medica(Cédula,Nombre,Apellido,Dirección,Teléfono,Correo,Fecha,HoraConsulta,MedicoAsignado)value(?,?,?,?,?,?,?,?,?)";
+        if ((txtCedula.getText().isEmpty()) || (txtNombre.getText().isEmpty()) || (txtApellido.getText().isEmpty()) || (txtDireccion.getText().isEmpty()) || (txtTelefono.getText().isEmpty())
+                || (txtCorreo.getText().isEmpty()) || (dateFechaCita.getText().isEmpty()) || (txyHorario.getText().isEmpty()) || (txtMedicoAsignado.getText().isEmpty())) {
 
-            PreparedStatement pst = con.prepareStatement(SQL);
-            pst.setString(1, txtCedula.getText());
-            pst.setString(2, txtNombre.getText());
-            pst.setString(3, txtApellido.getText());
-            pst.setString(4, txtDireccion.getText());
-            pst.setString(5, txtTelefono.getText());
-            pst.setString(6, txtCorreo.getText());
-            pst.setString(7, dateFechaCita.getText());
-            pst.setString(8, txyHorario.getText());
-            pst.setString(9, txtMedicoAsignado.getText());
+            JOptionPane.showMessageDialog(this, "Existen campos vacíos");
+        } else {
 
-            pst.execute();
-            JOptionPane.showMessageDialog(null, "Registro exitoso");
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "Error de Registro" + e.getMessage());
+            try {
+                String SQL = "insert into cita_medica(Cédula,Nombre,Apellido,Dirección,Teléfono,Correo,Fecha,HoraConsulta,MedicoAsignado)value(?,?,?,?,?,?,?,?,?)";
+
+                PreparedStatement pst = con.prepareStatement(SQL);
+                pst.setString(1, txtCedula.getText());
+                pst.setString(2, txtNombre.getText());
+                pst.setString(3, txtApellido.getText());
+                pst.setString(4, txtDireccion.getText());
+                pst.setString(5, txtTelefono.getText());
+                pst.setString(6, txtCorreo.getText());
+                pst.setString(7, dateFechaCita.getText());
+                pst.setString(8, txyHorario.getText());
+                pst.setString(9, txtMedicoAsignado.getText());
+
+                pst.execute();
+                JOptionPane.showMessageDialog(null, "Registro exitoso");
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(null, "Error de Registro" + e.getMessage());
+            }
         }
     }
 
     public void ActualizarDatos() {
 
-        try {
-            String SQL = " update cita_medica set Nombre=?,Apellido=?,Dirección=?,Teléfono=?,Correo=?,Fecha=?,HoraConsulta=?,MedicoAsignado=? where Cédula=? ";
-            int filaSeleccionada = tblCitaM.getSelectedRow();
-            String dao = (String) tblCitaM.getValueAt(filaSeleccionada, 0);
-            PreparedStatement pst = con.prepareStatement(SQL);
+        if ((txtCedula.getText().isEmpty()) || (txtNombre.getText().isEmpty()) || (txtApellido.getText().isEmpty()) || (txtDireccion.getText().isEmpty()) || (txtTelefono.getText().isEmpty())
+                || (txtCorreo.getText().isEmpty()) || (dateFechaCita.getText().isEmpty()) || (txyHorario.getText().isEmpty()) || (txtMedicoAsignado.getText().isEmpty())) {
 
-            pst.setString(1, txtNombre.getText());
-            pst.setString(2, txtApellido.getText());
-            pst.setString(3, txtTelefono.getText());
-            pst.setString(4, txtDireccion.getText());
-            pst.setString(5, txtCorreo.getText());
-            pst.setString(6, dateFechaCita.getText());
-            pst.setString(7, txyHorario.getText());
-            pst.setString(8, txtMedicoAsignado.getText());
+            JOptionPane.showMessageDialog(this, "No se ha seleccionado la cita");
+        } else {
 
-            pst.setString(9, dao);
+            try {
+                String SQL = " update cita_medica set Nombre=?,Apellido=?,Dirección=?,Teléfono=?,Correo=?,Fecha=?,HoraConsulta=?,MedicoAsignado=? where Cédula=? ";
+                int filaSeleccionada = tblCitaM.getSelectedRow();
+                String dao = (String) tblCitaM.getValueAt(filaSeleccionada, 0);
+                PreparedStatement pst = con.prepareStatement(SQL);
 
-            pst.executeUpdate();
-            JOptionPane.showMessageDialog(null, "Registro Actualizado Exitoso");
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "Error de Actualiación" + e.getMessage());
+                pst.setString(1, txtNombre.getText());
+                pst.setString(2, txtApellido.getText());
+                pst.setString(3, txtTelefono.getText());
+                pst.setString(4, txtDireccion.getText());
+                pst.setString(5, txtCorreo.getText());
+                pst.setString(6, dateFechaCita.getText());
+                pst.setString(7, txyHorario.getText());
+                pst.setString(8, txtMedicoAsignado.getText());
+
+                pst.setString(9, dao);
+
+                pst.executeUpdate();
+                JOptionPane.showMessageDialog(null, "Registro Actualizado");
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(null, "Error de Actualiación" + e.getMessage());
+            }
         }
     }
 
     public void eliminarRegistros() {
-        int filaSeleccionada = tblCitaM.getSelectedRow();
+        if ((txtCedula.getText().isEmpty()) || (txtNombre.getText().isEmpty()) || (txtApellido.getText().isEmpty()) || (txtDireccion.getText().isEmpty()) || (txtTelefono.getText().isEmpty())
+                || (txtCorreo.getText().isEmpty()) || (dateFechaCita.getText().isEmpty()) || (txyHorario.getText().isEmpty()) || (txtMedicoAsignado.getText().isEmpty())) {
 
-        try {
-            String SQL = "delete from cita_medica where Cédula=" + tblCitaM.getValueAt(filaSeleccionada, 0);
+            JOptionPane.showMessageDialog(this, "No se ha seleccionado la cita");
+        } else {
+            int filaSeleccionada = tblCitaM.getSelectedRow();
 
-            Statement st = con.createStatement();
-            int n = st.executeUpdate(SQL);
+            try {
+                String SQL = "delete from cita_medica where Cédula=" + tblCitaM.getValueAt(filaSeleccionada, 0);
 
-            if (n >= 0) {
-                JOptionPane.showMessageDialog(null, "Registro Eliminado");
+                Statement st = con.createStatement();
+                int n = st.executeUpdate(SQL);
+
+                if (n >= 0) {
+                    JOptionPane.showMessageDialog(null, "Registro Eliminado");
+                }
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(null, "Error al Eliminar Registro" + e.getMessage());
             }
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "Error al Eliminar Registro" + e.getMessage());
         }
     }
 

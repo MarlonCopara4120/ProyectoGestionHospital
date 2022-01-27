@@ -8,7 +8,7 @@ import javax.swing.JOptionPane;
 
 public class Frm_registrar_usuarios extends javax.swing.JFrame {
 
-     public Frm_registrar_usuarios() {
+    public Frm_registrar_usuarios() {
         initComponents();
         setLocationRelativeTo(null);
     }
@@ -298,12 +298,12 @@ public class Frm_registrar_usuarios extends javax.swing.JFrame {
     }//GEN-LAST:event_txtApellidosActionPerformed
 
     private void btnRegresarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegresarActionPerformed
- Frm_login ventana = new Frm_login();
+        Frm_login ventana = new Frm_login();
         ventana.setVisible(true);
         this.dispose();
 
     }//GEN-LAST:event_btnRegresarActionPerformed
-  public void limpiarCajas() {
+    public void limpiarCajas() {
 
         txtNombre.setText("");
         txtApellidos.setText("");
@@ -313,11 +313,11 @@ public class Frm_registrar_usuarios extends javax.swing.JFrame {
 
     }
     private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarActionPerformed
- try {
+        try {
             int seleccionado = cbServicio.getSelectedIndex();
 
-            if (txtApellidos.getText().equals("") && (txtNombre.getText().equals("")) && (txtCorreo.getText().equals("")) && (txtContraseña.getText().equals(""))) {
-                JOptionPane.showMessageDialog(this, "Existen campos vacios");
+            if ((txtNombre.getText().isEmpty()) || txtApellidos.getText().isEmpty() || (cbServicio.getItemAt(seleccionado).isEmpty()) || (txtCorreo.getText().isEmpty()) || (txtContraseña.getText().isEmpty())) {
+                JOptionPane.showMessageDialog(this, "Existen campos vacíos");
             } else {
 
                 int i = metodos.guardar(txtNombre.getText(), txtApellidos.getText(), cbServicio.getItemAt(seleccionado), txtCorreo.getText(), txtContraseña.getText());

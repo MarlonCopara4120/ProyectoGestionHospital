@@ -238,11 +238,12 @@ public class Frm_registro_paciente_internado_modificar extends javax.swing.JFram
                         .addComponent(txtApellido, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(jLabel5)))
                 .addGap(18, 18, 18)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(txtNumeroSala, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel6)
-                    .addComponent(jLabel10)
-                    .addComponent(txtMedicoAsignado, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(txtNumeroSala, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel10)
+                        .addComponent(txtMedicoAsignado, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(btnRegresar, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(6, 6, 6))
@@ -327,7 +328,7 @@ public class Frm_registro_paciente_internado_modificar extends javax.swing.JFram
 
     private void btnRegistrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegistrarActionPerformed
 
-        insertarDatos();
+        actualizarDatos();
         desbloquear();
         limpiarCajas();
         mostrarDatos();
@@ -450,27 +451,35 @@ public class Frm_registro_paciente_internado_modificar extends javax.swing.JFram
 
     }
 
-    public void insertarDatos() {
+    public void actualizarDatos() {
 
-        try {
-            String SQL = " update registro_paciente set Nombre=?,Apellido=?,NúmeroSala=?,Área=?,NúmeroCama=?,MotivoIngreso=?,MédicoAsignado=? where Cédula=? ";
-            int filaSeleccionada = tblTablaInternado.getSelectedRow();
-            String dao = (String) tblTablaInternado.getValueAt(filaSeleccionada, 0);
-            PreparedStatement pst = con.prepareStatement(SQL);
+        if ((txtCedula.getText().isEmpty()) || (txtNombre.getText().isEmpty()) || (txtApellido.getText().isEmpty()) || (txtNumeroSala.getText().isEmpty()) || (txtArea.getText().isEmpty())
+                || (txtNumeroCama.getText().isEmpty()) || (txtMotivoIngreso.getText().isEmpty()) || (txtMedicoAsignado.getText().isEmpty())) {
 
-            pst.setString(1, txtNombre.getText());
-            pst.setString(2, txtApellido.getText());
-            pst.setString(3, txtNumeroSala.getText());
-            pst.setString(4, txtArea.getText());
-            pst.setString(5, txtNumeroCama.getText());
-            pst.setString(6, txtMotivoIngreso.getText());
-            pst.setString(7, txtMedicoAsignado.getText());
+            JOptionPane.showMessageDialog(this, "No se ha seleccionado los datos del paciente");
+        } else {
 
-            pst.setString(8, dao);
-            pst.executeUpdate();
-            JOptionPane.showMessageDialog(null, "Registro Insertado Exitoso");
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "Error de inserción" + e.getMessage());
+            try {
+                String SQL = " update registro_paciente set Nombre=?,Apellido=?,NúmeroSala=?,Área=?,NúmeroCama=?,MotivoIngreso=?,MédicoAsignado=? where Cédula=? ";
+                int filaSeleccionada = tblTablaInternado.getSelectedRow();
+                String dao = (String) tblTablaInternado.getValueAt(filaSeleccionada, 0);
+                PreparedStatement pst = con.prepareStatement(SQL);
+
+                
+                pst.setString(1, txtNombre.getText());
+                pst.setString(2, txtApellido.getText());
+                pst.setString(3, txtNumeroSala.getText());
+                pst.setString(4, txtArea.getText());
+                pst.setString(5, txtNumeroCama.getText());
+                pst.setString(6, txtMotivoIngreso.getText());
+                pst.setString(7, txtMedicoAsignado.getText());
+
+                pst.setString(8, dao);
+                pst.executeUpdate();
+                JOptionPane.showMessageDialog(null, "Registro Actualizado");
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(null, "Error de actualización" + e.getMessage());
+            }
         }
     }
 
